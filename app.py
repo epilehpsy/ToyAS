@@ -1,5 +1,5 @@
-from flask import Flask
-from models import db
+from flask import Flask, render_template, url_for, request
+from models import db, User
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
@@ -14,4 +14,19 @@ with app.app_context():
 @app.route('/')
 def index():
     return 'Hello, World!'
+
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == 'GET':
+        return render_template('signup.html')
+    
+    username = request.form.get('username')
+    password = request.form.get('password')
+    
+    user = User(username=username)
+    db.session.add(user)
+    db.session.commit()
+    return 'User created'
+    
+
 
