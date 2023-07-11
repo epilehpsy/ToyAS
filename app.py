@@ -23,10 +23,16 @@ def signup():
     username = request.form.get('username')
     password = request.form.get('password')
     
-    user = User(username=username)
+    user = User.query.filter_by(username=username).first()
+    if user:
+        return "User already exists"
+    
+    user = User(username=username, password=password)
     db.session.add(user)
     db.session.commit()
-    return 'User created'
-    
+
+    #Just to see if it works
+    user = User.query.filter_by(username=username).first()
+    return f"User {user.username} added successfully"
 
 

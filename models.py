@@ -12,6 +12,7 @@ db = SQLAlchemy()
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(40), unique=True)
+    password = db.Column(db.String(128))
 
     def __str__(self):
         return self.username
@@ -20,7 +21,7 @@ class User(db.Model):
         return self.id
 
     def check_password(self, password):
-        return password == 'valid'
+        return password == self.password
 
 
 class OAuth2Client(db.Model, OAuth2ClientMixin):
