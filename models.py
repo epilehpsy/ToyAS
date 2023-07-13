@@ -5,11 +5,17 @@ from authlib.integrations.sqla_oauth2 import (
     OAuth2AuthorizationCodeMixin,
     OAuth2TokenMixin,
 )
+from flask_login import UserMixin
 
 db = SQLAlchemy()
 
+logged_users = []
 
-class User(db.Model):
+
+class User(db.Model, UserMixin):
+
+
+    
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(40), unique=True)
     password = db.Column(db.String(128))
@@ -22,6 +28,17 @@ class User(db.Model):
 
     def check_password(self, password):
         return password == self.password
+    
+    def get_user(id):
+        for user in logged_users:
+            if user.id == id:
+                return user
+            return None
+        
+    def __repr__(self):
+        return '<User %r>' % self.username
+    
+
 
 
 class OAuth2Client(db.Model, OAuth2ClientMixin):

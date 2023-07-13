@@ -22,6 +22,10 @@ def test_login_page(test_client):
     response = test_client.get('/login')
     assert response.status_code == 200
 
+def test_me_forbidden(test_client):
+    response = test_client.get('/me')
+    assert response.status_code == 401
+
 def test_login_success(test_client):
     response = test_client.post('/login', data=dict(username=username, password=password))
     assert response.status_code == 200
@@ -31,4 +35,7 @@ def test_login_failure(test_client):
     response = test_client.post('/login', data=dict(username=username, password='wrongpass'))
     assert response.status_code == 401
 
-
+def test_me(test_client):
+    response = test_client.get('/me')
+    assert response.status_code == 200
+    assert bytes(username, 'utf-8') in response.data
