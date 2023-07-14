@@ -1,6 +1,9 @@
-from flask import Flask, render_template, url_for, request
+from flask import Flask, render_template, url_for, request, redirect
 from models import db, User, logged_users
-from flask_login import LoginManager, login_user, current_user, login_required
+from flask_login import LoginManager, login_user, current_user, login_required, logout_user
+from oauth2 import config_oauth, authorization
+from authlib.oauth2 import OAuth2Error
+import os
 
 login_manager = LoginManager()
 
@@ -8,11 +11,13 @@ def create_app(config_file=None):
     app = Flask(__name__)
     app.config['SECRET_KEY'] = 'secret!'
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
+    app.config['AUTHLIB_INSECURE_TRANSPORT'] = '1' #change this in production
     db.init_app(app)
     with app.app_context():
         db.create_all()
 
     login_manager.init_app(app)
+    config_oauth(app)
     return app
 
 
@@ -21,11 +26,13 @@ app = create_app()
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.get_user(user_id)
+    for user in logged_users:
+        if user.id == int(user_id):
+            return user
 
 @app.route('/')
 def index():
-    return 'Hello, World!'
+    return 'Hello, World!' +( current_user.username if current_user.is_authenticated  else "not logged in")
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -68,5 +75,6 @@ def login():
 @app.route('/me')
 @login_required
 def me():
-    return "Hello, "+str(current_user.username)
+    return "Hello," + current_user.username
+
 
