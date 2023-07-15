@@ -45,9 +45,13 @@ class OAuth2Client(db.Model, OAuth2ClientMixin):
     __tablename__ = 'oauth2_client'
 
     id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(40))
     user_id = db.Column(
         db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'))
     user = db.relationship('User')
+
+    # the mixin alredy establishes the client_id, secret, redirect_uri, ...
+    # https://github.com/lepture/authlib/blob/master/authlib/integrations/sqla_oauth2/client_mixin.py
 
 
 class OAuth2AuthorizationCode(db.Model, OAuth2AuthorizationCodeMixin):

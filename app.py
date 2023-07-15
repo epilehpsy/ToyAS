@@ -1,9 +1,10 @@
 from flask import Flask, render_template, url_for, request, redirect
-from models import db, User, logged_users
+from models import db, User, logged_users, OAuth2Client
 from flask_login import LoginManager, login_user, current_user, login_required, logout_user
 from oauth2 import config_oauth, authorization
 from authlib.oauth2 import OAuth2Error
 import os
+import time
 
 login_manager = LoginManager()
 
@@ -69,12 +70,36 @@ def login():
     login_user(user)
     logged_users.append(user)
 
-    return "Logged in successfully"+str(user.username), 200
+    return redirect(url_for('me'))
 
 # This is a protected route
 @app.route('/me')
 @login_required
 def me():
-    return "Hello," + current_user.username
+    return render_template('me.html', clients=OAuth2Client.query.filter_by(user_id=current_user.id).all())
+
+@app.route('/client_register', methods=['GET', 'POST'])
+@login_required
+def client_register():
+    if request.method == 'GET':
+        return render_template('client_register.html')
+
+    name = request.form.get('name')
+    #Client ID and Client Secret are generated automatically
+    client_id =  os.urandom(24).hex()
+    client_secret = os.urandom(24).hex()
+
+    client = OAuth2Client(
+        name=name,
+        client_id=client_id,
+        client_id_issued_at=int(time.time()),
+        user_id=current_user.id,
+    )
+
+    client.client_secret = client_secret
+    db.session.add(client)
+    db.session.commit()
+    return redirect(url_for('me'))
+
 
 
