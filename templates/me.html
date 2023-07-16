@@ -4,12 +4,13 @@
 
 <div>
     <h1>Profile</h1>
+    <p>ID: {{ current_user.id }}</p>
     <p>Username: {{ current_user.username }}</p>
     {% for client in clients %}
-    <p>Client: {{ client.name }}</p>
+    <p>Client: {{ client.client_name }}</p>
     <p>Client ID: {{ client.client_id }}</p>
     <p>Client Secret: {{ client.client_secret }}</p>
-    <p>Redirect URI: {{ client.redirect_uri }}</p>
+    <p>Redirect URI: {{ client.redirect_uris }}</p>
     <p>Issued at: {{ client.client_id_issued_at }}</p>
     {% endfor %}
 </div>

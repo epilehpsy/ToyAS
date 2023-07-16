@@ -13,6 +13,7 @@ def create_app(config_file=None):
     app.config['SECRET_KEY'] = 'secret!'
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
     app.config['AUTHLIB_INSECURE_TRANSPORT'] = '1' #change this in production
+    os.environ['AUTHLIB_INSECURE_TRANSPORT'] = '1'
     db.init_app(app)
     with app.app_context():
         db.create_all()
@@ -27,9 +28,7 @@ app = create_app()
 
 @login_manager.user_loader
 def load_user(user_id):
-    for user in logged_users:
-        if user.id == int(user_id):
-            return user
+    return User.query.get(int(user_id))
 
 @app.route('/')
 def index():
@@ -68,7 +67,6 @@ def login():
         return "Wrong username or password", 401
     
     login_user(user)
-    logged_users.append(user)
 
     return redirect(url_for('me'))
 
@@ -76,7 +74,7 @@ def login():
 @app.route('/me')
 @login_required
 def me():
-    return render_template('me.html', clients=OAuth2Client.query.filter_by(user_id=current_user.id).all())
+    return render_template('me.html', user=User.query.filter_by(id = current_user.id), clients=OAuth2Client.query.filter_by(user_id=current_user.id).all())
 
 @app.route('/client_register', methods=['GET', 'POST'])
 @login_required
@@ -90,16 +88,42 @@ def client_register():
     client_secret = os.urandom(24).hex()
 
     client = OAuth2Client(
-        name=name,
         client_id=client_id,
         client_id_issued_at=int(time.time()),
         user_id=current_user.id,
     )
 
+    client_metadata = {
+        "client_name": name,
+        "redirect_uris": request.form.get('redirect_uris').splitlines(),
+        "scope": "profile",
+        "grant_types": ["authorization_code"], # For the token endpoint
+        "response_types": ["code"] # For the authorization endpoint
+    }
+
+    client.set_client_metadata(client_metadata)
     client.client_secret = client_secret
     db.session.add(client)
     db.session.commit()
     return redirect(url_for('me'))
+
+
+@app.route('/oauth/authorize', methods=['GET', 'POST'])
+@login_required
+def authorize():
+
+    if request.method == 'POST':
+        grant_user = None
+        if request.form.get('confirm'):
+            grant_user = current_user
+        return authorization.create_authorization_response(grant_user=grant_user)
+            
+    try:
+        grant = authorization.get_consent_grant(end_user=current_user)
+        return render_template('authorize.html', grant=grant)
+    except OAuth2Error as error:
+        return error.get_body() , error.status_code    
+
 
 
 
