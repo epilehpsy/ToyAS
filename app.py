@@ -122,7 +122,11 @@ def authorize():
         grant = authorization.get_consent_grant(end_user=current_user)
         return render_template('authorize.html', grant=grant)
     except OAuth2Error as error:
-        return error.get_body() , error.status_code    
+        return error.get_body() , error.status_code
+
+@app.route('/oauth/token', methods=['POST'])
+def token():
+    return authorization.create_token_response()
 
 
 
