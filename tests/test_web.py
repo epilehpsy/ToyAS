@@ -1,4 +1,4 @@
-from models import OAuth2Client, OAuth2AuthorizationCode
+from models import OAuth2Client, OAuth2AuthorizationCode, OAuth2Token
 username = 'test'
 password = 'testpass'
 
@@ -121,3 +121,13 @@ def test_token(test_client):
     assert 'access_token' in response.json
     assert 'token_type' in response.json
     assert 'expires_in' in response.json
+
+def test_api_profile(test_client):
+    
+    token = OAuth2Token.query.first().access_token
+    response = test_client.get('/api/profile',
+                                headers={'Authorization': 'Bearer ' + token}
+    )
+    print(response.data)
+    assert response.status_code == 200
+    assert bytes(username, 'utf-8') in response.data

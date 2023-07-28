@@ -1,10 +1,12 @@
-from flask import Flask, render_template, url_for, request, redirect
+from flask import Flask, render_template, url_for, request, redirect, jsonify
 from models import db, User, logged_users, OAuth2Client
 from flask_login import LoginManager, login_user, current_user, login_required, logout_user
-from oauth2 import config_oauth, authorization
+from oauth2 import config_oauth, authorization, require_oauth
 from authlib.oauth2 import OAuth2Error
 import os
 import time
+import json
+from authlib.integrations.flask_oauth2 import current_token
 
 login_manager = LoginManager()
 
@@ -129,5 +131,9 @@ def token():
     return authorization.create_token_response()
 
 
-
+@app.route('/api/profile')
+@require_oauth('profile')
+def api_profile():
+    user = current_token.user
+    return jsonify(id=user.id, username=user.username)
 
