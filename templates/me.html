@@ -2,17 +2,28 @@
 {% block title %}Profile{% endblock %}
 {% block content %}
 
-<div>
-    <h1>Profile</h1>
+<div class="container">
+    <h1>🤵 Profile</h1>
     <p>ID: {{ current_user.id }}</p>
     <p>Username: {{ current_user.username }}</p>
-    {% for client in clients %}
-    <p>Client: {{ client.client_name }}</p>
-    <p>Client ID: {{ client.client_id }}</p>
-    <p>Client Secret: {{ client.client_secret }}</p>
-    <p>Redirect URI: {{ client.redirect_uris }}</p>
-    <p>Issued at: {{ client.client_id_issued_at }}</p>
-    {% endfor %}
+    <h3>Clients</h3>
+    <a href="{{ url_for('client_register') }}" class="btn btn-outline-dark">
+        📝 Create new client
+    </a>
+    <div class="mt-3"></div>
+        {% for client in clients %}
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">{{ client.client_name }} </h5>
+                <p class="card-text">Client ID: {{ client.client_id }}</p>
+                <p class="card-text">Client Secret: {{ client.client_secret }}</p>
+                <p class="card-text">Redirect URI: {{ client.redirect_uris }}</p>
+                <p class="card-text">Issued at: {{ client.client_id_issued_at }}</p>
+                <a href="#" class="btn btn-danger">🗑 Delete</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
 </div>
     
 {% endblock %}
