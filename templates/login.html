@@ -1,13 +1,16 @@
 {% extends "base.html" %}
 {% block title %}Log in{% endblock %}
 {% block content %}
+<h1>🔓 Log in</h1>
 <div>
     <form action="{{ url_for('login') }}" method="POST">
         <label for="username">Username</label>
-        <input type="text" id="username" name="username">
+        <input type="text" class="form-control" name="username">
         <label for="password">Password</label>
-        <input type="text" id="password" name="password">
-        <button type="submit">Submit</button>
+        <input type="password" class="form-control" name="password">
+        <br>
+        <button type="submit" class="btn btn-primary">Submit</button>
     </form>
+    <p>Don't have an account? <a href="{{ url_for('signup') }}">Sign up</a></p>
 </div>
 {% endblock %}
