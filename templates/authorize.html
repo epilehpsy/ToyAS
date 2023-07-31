@@ -4,8 +4,8 @@
 <div>
 Would you authorize access to the client {{ grant.client.client_name }} to your account?
 <form action="" method="POST">
-    <button type="submit" name="confirm">Authorize</button>
-    <button type="submit" name="cancel">Cancel</button>
+    <input type="hidden" name="confirm" value="yes" />
+    <button type="submit">Authorize</button>
 </form>
 </div>
 {% endblock %}
