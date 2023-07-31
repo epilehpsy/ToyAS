@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="mt-5 container d-flex flex-column justify-content-center align-items-center text-center">
+    <div>
+        <img src="{{ url_for('static_file', path='logo.svg') }}" width="100" height="100" alt="Page logo">
+        <h1>Welcome to ToyAS</h1>
+    </div>
+
+    <div class="mt-5">
+        <h2>For users</h2>
+        <p>
+            If you are a user, you can register and login 
+            to your account to manage your resources.
+        </p>
+        <div>
+            <a href="{{ url_for('signup') }}" class="btn btn-primary">Sign-up</a>
+            <a href="{{ url_for('login') }}" class="btn btn-secondary">Log-in</a>
+        </div>
+    </div>
+
+    <div class="mt-5"> 
+        <h2>For clients</h2>
+        <p>
+            If you are a developer, once logged in, you can register your OAuth 2.0 
+            client to make delegated use of an user's resources.
+        </p>
+        <a href="{{ url_for('client_register') }}" class="btn btn-outline-dark">
+            <img src="{{ url_for('static_file', path='Oauth_logo.svg') }}" width="30" height="30" alt="OAuth 2.0 logo">
+            Client registration
+        </a>
+    </div>
+</div>
+
+{% endblock %}
