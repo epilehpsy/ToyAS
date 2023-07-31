@@ -76,6 +76,13 @@ def login():
 
     return redirect(url_for('me'))
 
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
+
+
 # This is a protected route
 @app.route('/me')
 @login_required
