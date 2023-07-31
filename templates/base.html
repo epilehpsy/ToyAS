@@ -23,15 +23,11 @@
                     <a class="nav-link" href="{{ url_for('index') }}">Home <span
                             class="sr-only">(current)</span></a>
                 </li>
+                {% if current_user.is_authenticated %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('login') }}">Log-in</a>
+                    <a class="nav-link" href="{{ url_for('me') }}">Profile</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Pricing</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
-                </li>   
+                {% endif %}
             </ul>
         </div>
 
@@ -76,7 +72,7 @@
             {% block content %}
             {% endblock %}
         </div>
-        <footer id="footer" class="fixed-bottom">
+        <footer id="footer">
             <div class="container p-4">
                 <span class="text-muted ">Made with ❤ by felpud0.</span>
             </div>
