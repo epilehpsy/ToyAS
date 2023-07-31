@@ -122,7 +122,7 @@ def authorize():
             
     try:
         grant = authorization.get_consent_grant(end_user=current_user)
-        return render_template('authorize.html', grant=grant)
+        return render_template('authorize.html', grant=grant) #, 200, {'X-Frame-Options': 'DENY'}
     except OAuth2Error as error:
         return error.get_body() , error.status_code
 
