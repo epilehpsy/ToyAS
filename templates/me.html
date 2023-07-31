@@ -4,9 +4,10 @@
 
 <div class="container">
     <h1>🤵 Profile</h1>
+    <h3>Information</h3>
     <p>ID: {{ current_user.id }}</p>
     <p>Username: {{ current_user.username }}</p>
-    <h3>Clients</h3>
+    <h3>Registered clients</h3>
     <a href="{{ url_for('client_register') }}" class="btn btn-outline-dark">
         📝 Create new client
     </a>
