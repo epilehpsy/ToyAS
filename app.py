@@ -28,6 +28,10 @@ def create_app(config_file=None):
 
 app = create_app()
 
+# static resources
+@app.route('/static/<path:path>')
+def static_file(path):
+    return send_from_directory('static', path)
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -35,7 +39,7 @@ def load_user(user_id):
 
 @app.route('/')
 def index():
-    return 'Hello, World!' +( current_user.username if current_user.is_authenticated  else "not logged in")
+    return  render_template('index.html')
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -72,6 +76,13 @@ def login():
     login_user(user)
 
     return redirect(url_for('me'))
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
+
 
 # This is a protected route
 @app.route('/me')

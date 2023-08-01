@@ -2,19 +2,19 @@
 {% block title %}Register your OAuth client{% endblock %}
 {% block content %}
 
+<h1>🤖 Register your OAuth client</h1>
 <div>
-
     <form action="{{ url_for('client_register') }}" method="POST">
 
         <label for="name">Name</label>
-        <input type="text" id="name" name="name">
+        <input type="text" class="form-control" name="name" placeholder="My client" required>
 
         <label for="redirect_uri">Redirect URIs</label>
-        <input type="text" id="redirect_uris" name="redirect_uris">
-        
-        <button type="submit">Submit</button>
-
+        <input type="url" class="form-control" name="redirect_uris" placeholder="https://example.com/oauth2callback" required>
+        <br>
+        <button type="submit" class="btn btn-primary">Submit</button>
     </form>
 
+</div>
 
 {% endblock %}
