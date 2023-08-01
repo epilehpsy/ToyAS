@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, request, redirect, jsonify
+from flask import Flask, render_template, url_for, request, redirect, jsonify, send_from_directory, flash
 from models import db, User, logged_users, OAuth2Client
 from flask_login import LoginManager, login_user, current_user, login_required, logout_user
 from oauth2 import config_oauth, authorization, require_oauth
@@ -20,6 +20,7 @@ def create_app(config_file=None):
     with app.app_context():
         db.create_all()
 
+    login_manager.login_view = "login"
     login_manager.init_app(app)
     config_oauth(app)
     return app
