@@ -2,28 +2,36 @@
 {% block title %}Profile{% endblock %}
 {% block content %}
 
-<div class="container">
+<div>
     <h1>🤵 Profile</h1>
-    <h3>Information</h3>
-    <p>ID: {{ current_user.id }}</p>
-    <p>Username: {{ current_user.username }}</p>
-    <h3>Registered clients</h3>
-    <a href="{{ url_for('client_register') }}" class="btn btn-outline-dark">
-        📝 Create new client
-    </a>
-    <div class="mt-3"></div>
-        {% for client in clients %}
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">{{ client.client_name }} </h5>
-                <p class="card-text">Client ID: {{ client.client_id }}</p>
-                <p class="card-text">Client Secret: {{ client.client_secret }}</p>
-                <p class="card-text">Redirect URI: {{ client.redirect_uris }}</p>
-                <p class="card-text">Issued at: {{ client.client_id_issued_at }}</p>
-                <a href="#" class="btn btn-danger">🗑 Delete</a>
-            </div>
+    <div class="mt-5" style="display: flex;">
+        <img src="{{ url_for('static', filename='profile.png') }}" alt="Profile" class="img-thumbnail" style="width: 200px; height: 200px;">
+        <div class="container">
+            <h3>Information</h3>
+            <p>ID: {{ current_user.id }}</p>
+            <p>Username: {{ current_user.username }}</p>
+
         </div>
-        {% endfor %}
+    </div>
+    <div class="mt-5">
+        <h3>Registered clients</h3>
+        <a href="{{ url_for('client_register') }}" class="btn btn-outline-dark">
+            📝 Create new client
+        </a>
+        <div class="mt-3"></div>
+            {% for client in clients %}
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ client.client_name }} </h5>
+                    <p class="card-text">Client ID: {{ client.client_id }}</p>
+                    <p class="card-text">Client Secret: {{ client.client_secret }}</p>
+                    <p class="card-text">Redirect URI: {{ client.redirect_uris }}</p>
+                    <p class="card-text">Issued at: {{ client.client_id_issued_at }}</p>
+                    <a href="#" class="btn btn-danger">🗑 Delete</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
     </div>
 </div>
     
