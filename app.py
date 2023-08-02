@@ -1,5 +1,5 @@
 from flask import Flask, render_template, url_for, request, redirect, jsonify, send_from_directory, flash
-from models import db, User, logged_users, OAuth2Client
+from models import db, User, logged_users, OAuth2Client, Image
 from flask_login import LoginManager, login_user, current_user, login_required, logout_user
 from oauth2 import config_oauth, authorization, require_oauth
 from authlib.oauth2 import OAuth2Error
@@ -7,6 +7,7 @@ import os
 import time
 import json
 from authlib.integrations.flask_oauth2 import current_token
+import base64
 
 login_manager = LoginManager()
 
@@ -27,6 +28,10 @@ def create_app(config_file=None):
 
 
 app = create_app()
+
+@app.template_filter('b64encode')
+def b64encode(s):
+    return base64.b64encode(s).decode('utf-8')
 
 # static resources
 @app.route('/static/<path:path>')
@@ -121,6 +126,35 @@ def client_register():
     db.session.commit()
     return redirect(url_for('me'))
 
+
+@app.route('/images', methods=['GET', 'POST'])
+@login_required
+def images():
+    if request.method == 'GET':
+        user_images=Image.query.filter_by(user_id=current_user.id).all()
+        return render_template('images.html', images=user_images)
+
+    #TODO: Add image 
+    image = request.files.get('image')
+    if not image:
+        return "No image", 400
+    
+    # save the image to the database
+    image = Image(
+        user_id=current_user.id,
+        name=image.filename,
+        img=image.read(),
+    )
+    db.session.add(image)
+    db.session.commit()
+    return redirect(url_for('images'))
+
+
+
+
+
+
+## API PART
 
 @app.route('/oauth/authorize', methods=['GET', 'POST'])
 @login_required
