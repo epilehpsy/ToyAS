@@ -64,7 +64,9 @@ def signup():
 
     #Just to see if it works
     user = User.query.filter_by(username=username).first()
-    return "User added successfully"+str(user.username),200
+    login_user(user)
+    flash("Registered successfully!")
+    return redirect(url_for('login'))
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -79,7 +81,7 @@ def login():
         return "Wrong username or password", 401
     
     login_user(user)
-
+    flash('Welcome back '+user.username)
     return redirect(url_for('me'))
 
 @app.route('/logout')
@@ -124,6 +126,7 @@ def client_register():
     client.client_secret = client_secret
     db.session.add(client)
     db.session.commit()
+    flash('Client added successfully')
     return redirect(url_for('me'))
 
 
@@ -147,7 +150,7 @@ def images():
     )
     db.session.add(image)
     db.session.commit()
-    
+    flash('Image added successfully')
     return redirect(url_for('images'))
 
 @app.route('/images/<int:image_id>/download')
