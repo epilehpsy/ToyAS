@@ -1,9 +1,9 @@
-from flask import Flask, render_template, url_for, request, redirect, jsonify, send_from_directory, flash
+from flask import Flask, render_template, url_for, request, redirect, jsonify, send_from_directory, flash, send_file
 from models import db, User, logged_users, OAuth2Client, Image
 from flask_login import LoginManager, login_user, current_user, login_required, logout_user
 from oauth2 import config_oauth, authorization, require_oauth
 from authlib.oauth2 import OAuth2Error
-import os
+import os, io
 import time
 import json
 from authlib.integrations.flask_oauth2 import current_token
@@ -147,6 +147,31 @@ def images():
     )
     db.session.add(image)
     db.session.commit()
+    
+    return redirect(url_for('images'))
+
+@app.route('/images/<int:image_id>/download')
+@login_required
+def download_image(image_id):
+    image = Image.query.filter_by(id=image_id).first()
+
+    if not image or image.user_id != current_user.id:
+        return "Image not found", 404
+
+    if request.method == 'GET':
+        return send_file(io.BytesIO(image.img), download_name=image.name, mimetype='image/jpg')
+
+@app.route('/images/<int:image_id>/delete')
+@login_required
+def delete_image(image_id):
+    image = Image.query.filter_by(id=image_id).first()
+
+    if not image or image.user_id != current_user.id:
+        return "Image not found", 404
+
+    db.session.delete(image)
+    db.session.commit()
+    flash('Image deleted successfully')
     return redirect(url_for('images'))
 
 
