@@ -64,7 +64,7 @@ def signup():
 
     #Just to see if it works
     user = User.query.filter_by(username=username).first()
-    login_user(user)
+    #login_user(user)
     flash("Registered successfully!")
     return redirect(url_for('login'))
 
@@ -117,7 +117,7 @@ def client_register():
     client_metadata = {
         "client_name": name,
         "redirect_uris": request.form.get('redirect_uris').splitlines(),
-        "scope": "profile",
+        "scope": "profile images",
         "grant_types": ["authorization_code"], # For the token endpoint
         "response_types": ["code"] # For the authorization endpoint
     }
@@ -210,4 +210,36 @@ def token():
 def api_profile():
     user = current_token.user
     return jsonify(id=user.id, username=user.username)
+
+@app.route('/api/images', methods=['GET', 'POST'])
+@require_oauth('images')
+def api_images():
+    user = current_token.user
+    if request.method == 'GET':
+        images = Image.query.filter_by(user_id=user.id).all()
+        return jsonify([{'id': image.id, 'name': image.name} for image in images])
+    
+    image = request.files.get('image')
+    if not image:
+        return "No image", 400
+    
+    # save the image to the database
+    image = Image(
+        user_id=user.id,
+        name=image.filename,
+        img=image.read(),
+    )
+    db.session.add(image)
+    db.session.commit()
+    return "Image added successfully", 201, {'Location': url_for('api_image', image_id=image.id)}
+
+@app.route('/api/images/<int:image_id>')
+@require_oauth('images')
+def api_image(image_id):
+    user = current_token.user
+    image = Image.query.filter_by(id=image_id, user_id=user.id).first()
+    if not image:
+        return "Image not found", 404
+    return send_file(io.BytesIO(image.img), download_name=image.name, mimetype='image/jpg')
+
 

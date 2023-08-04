@@ -15,7 +15,7 @@ def test_signup_page(test_client):
 
 def test_signup_success(test_client):
     response = test_client.post('/signup', data=dict(username=username, password=password))
-    assert response.status_code == 200
+    assert response.status_code == 302
 
 def test_signup_duplicate_user(test_client):
     response = test_client.post('/signup', data=dict(username=username, password=password))
@@ -27,7 +27,7 @@ def test_login_page(test_client):
 
 def test_me_forbidden(test_client):
     response = test_client.get('/me')
-    assert response.status_code == 401
+    assert response.status_code == 302
 
 def test_login_success(test_client):
     response = test_client.post('/login', data=dict(username=username, password=password))
@@ -89,7 +89,7 @@ def test_client_authorization_confirm(test_client):
     response = test_client.post('/oauth/authorize?response_type=code&client_id='
                                +str(oauthclient.client_id)
                                +'&redirect_uri='+oauthclient.redirect_uris[0]
-                               +'&scope=profile'
+                               +'&scope=profile images'
                                +'&state=xyz',
                                 data=dict(confirm="yes")
     )
@@ -131,3 +131,41 @@ def test_api_profile(test_client):
     print(response.data)
     assert response.status_code == 200
     assert bytes(username, 'utf-8') in response.data
+
+def test_api_images_upload(test_client):
+        
+    token = OAuth2Token.query.first().access_token
+    image = open('static/profile.png', 'rb')
+    response = test_client.post('/api/images',
+                                headers={'Authorization': 'Bearer ' + token}, 
+                                # An image file
+                                data=dict(image=(image, 'test.jpg'))
+    )
+    assert response.status_code == 201
+    # we follow the location header to get the image id
+    photo_path = response.location
+    response = test_client.get(photo_path,
+                                headers={'Authorization': 'Bearer ' + token}
+    )
+    assert response.status_code == 200
+    # compare the uploaded image with the downloaded one
+    image = open('static/profile.png', 'rb')
+    assert response.data == image.read()
+    
+
+
+def test_api_images(test_client):
+        
+    token = OAuth2Token.query.first().access_token
+    response = test_client.get('/api/images',
+                                headers={'Authorization': 'Bearer ' + token}
+    )
+    assert response.status_code == 200
+    # look for the image id in the response json
+    print(response.json)
+    photo_id = response.json[0]['id']
+    response = test_client.get('/api/images/'+str(photo_id),
+                                headers={'Authorization': 'Bearer ' + token}
+    )
+    assert response.status_code == 200
+    
