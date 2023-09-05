@@ -8,6 +8,7 @@ import time
 import json
 from authlib.integrations.flask_oauth2 import current_token
 import base64
+import vuln_protection_config
 
 login_manager = LoginManager()
 
@@ -196,7 +197,11 @@ def authorize():
             
     try:
         grant = authorization.get_consent_grant(end_user=current_user)
-        return render_template('authorize.html', grant=grant) #, 200, {'X-Frame-Options': 'DENY'}
+        if vuln_protection_config.CLICKJACKING:
+            return render_template('authorize.html', grant=grant) , 200, {'X-Frame-Options': 'DENY'}
+        else:
+            return render_template('authorize.html', grant=grant)
+
     except OAuth2Error as error:
         return error.get_body() , error.status_code
 
