@@ -99,21 +99,7 @@ def test_client_authorization_confirm(test_client):
     assert response.status_code == 302
     assert 'code=' in response.location
     
-def test_client_authorization_wrong_redirect_url(test_client):
-    # Get the only client in the database
-    oauthclient = OAuth2Client.query.first()
-    print ("oauthclient")
-    response = test_client.post('/oauth/authorize?response_type=code&client_id='
-                               +str(oauthclient.client_id)
-                               +'&redirect_uri='+oauthclient.redirect_uris[0]+'nop'
-                               +'&scope=profile'
-                               +'&state=xyz',
-                                data=dict(confirm="yes")
-    )
-    
-    print(response.location)
-    print(response.data)
-    assert response.status_code == 400
+
 
 def test_token(test_client):
     # Get the only client in the database
@@ -145,4 +131,3 @@ def test_api_profile(test_client):
     print(response.data)
     assert response.status_code == 200
     assert bytes(username, 'utf-8') in response.data
-

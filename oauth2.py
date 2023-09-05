@@ -8,11 +8,11 @@ from authlib.integrations.sqla_oauth2 import (
     create_revocation_endpoint,
     create_bearer_token_validator,
 )
-from authlib.oauth2.rfc6749 import grants, OAuth2Request
+from authlib.oauth2.rfc6749 import grants
 from authlib.oauth2.rfc7636 import CodeChallenge
 from models import db, User
 from models import OAuth2Client, OAuth2AuthorizationCode, OAuth2Token
-import vuln_protection_config
+
 
 class AuthorizationCodeGrant(grants.AuthorizationCodeGrant):
     TOKEN_ENDPOINT_AUTH_METHODS = [
@@ -46,12 +46,7 @@ class AuthorizationCodeGrant(grants.AuthorizationCodeGrant):
     def authenticate_user(self, authorization_code):
         return User.query.get(authorization_code.user_id)
 
-    # This overriding is to enable URI Redirect atacks
-    @staticmethod
-    def validate_authorization_redirect_uri(request: OAuth2Request, client):
-        if not vuln_protection_config.REDIRECT_URI:
-            return request.redirect_uri
-        return super(AuthorizationCodeGrant,AuthorizationCodeGrant).validate_authorization_redirect_uri(request, client)
+
 
 
 query_client = create_query_client_func(db.session, OAuth2Client)
