@@ -12,15 +12,38 @@ import vuln_protection_config
 
 login_manager = LoginManager()
 
+def initialize_table(app):
+    user = User(id=0, username='testuser', password='testpass')
+    db.session.add(user)
+    client = OAuth2Client(
+                client_id='demo-client-id',
+                client_id_issued_at=int(time.time()),
+                user_id=user.id,
+            )
+
+    client_metadata = {
+                "client_name": 'test-client-name',
+                "redirect_uris":'http://127.0.0.1:5000/callback',
+                "scope": "profile images",
+                "grant_types": ["authorization_code"], # For the token endpoint
+                "response_types": ["code"] # For the authorization endpoint
+            }
+
+    client.set_client_metadata(client_metadata)
+    client.client_secret = 'demo-client-secret'
+    db.session.add(client)
+    db.session.commit()
+
+
 def create_app(config_file=None):
     app = Flask(__name__)
-    app.config['SECRET_KEY'] = 'secret!'
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
-    app.config['AUTHLIB_INSECURE_TRANSPORT'] = '1' #change this in production
+    app.config.from_pyfile('defaultconf.cfg')
     os.environ['AUTHLIB_INSECURE_TRANSPORT'] = '1'
     db.init_app(app)
     with app.app_context():
         db.create_all()
+        if len(db.session.query(User).all()) == 0:
+            initialize_table(app)
 
     login_manager.login_view = "login"
     login_manager.init_app(app)
@@ -82,6 +105,10 @@ def login():
         return "Wrong username or password", 401
     
     login_user(user)
+    # if user is not just to log in, but need to head back to the auth page, then go for it
+    next_page = request.args.get('next')
+    if next_page:
+        return redirect(next_page)
     flash('Welcome back '+user.username)
     return redirect(url_for('me'))
 
