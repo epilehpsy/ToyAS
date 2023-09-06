@@ -1,6 +1,6 @@
 version: '3.1'
 services:
-  as:
+  toyas:
     build: .
     ports:
       - "80:5000"
@@ -14,4 +14,8 @@ services:
     volumes:
       - ./demo_client:/app
     depends_on:
-      - as
+      - toyas
+
+networks:
+  default:
+      name: toyas_default
