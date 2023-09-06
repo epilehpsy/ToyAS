@@ -5,9 +5,9 @@
 <div>
     <form action="{{ url_for('signup') }}" method="POST">
         <label for="username">Username</label>
-        <input type="text" class="form-control" name="username">
+        <input type="text" class="form-control" name="username" required>
         <label for="password">Password</label>
-        <input type="password" class="form-control" name="password">
+        <input type="password" class="form-control" name="password" required>
         <br>
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>

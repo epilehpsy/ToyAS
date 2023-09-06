@@ -1,0 +1,2 @@
+REDIRECT_URI = True
+CLICKJACKING = True

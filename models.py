@@ -75,3 +75,15 @@ class OAuth2Token(db.Model, OAuth2TokenMixin):
             return False
         expires_at = self.issued_at + self.expires_in * 2
         return expires_at >= time.time()
+    
+class Image(db.Model):
+    __tablename__ = 'toy'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(40), unique=True)
+    img = db.Column(db.LargeBinary, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user = db.relationship('User')
+    def __repr__(self):
+        return '<Image %r>' % self.name
+    def __str__(self):
+        return self.name

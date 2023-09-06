@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+  <style>
+    #wrapper {
+      z-index: 1;
+      display: none;
+      position: absolute;
+      top: 25%;
+      left: 25%;
+      height: 200px;
+      width: 200px;
+      background: grey;
+      align-items: center;
+      justify-content: center;
+    }
+    .printer {
+      position: relative;
+      --rad: 16px;
+      width: 120px;
+      height: 60px;
+      background: orange;
+      border: 6px solid #222;
+      border-radius: var(--rad) var(--rad) 0 0;
+      z-index: 0;
+    }
+    .printer:before,
+    .printer:after {
+      content: "";
+      position: absolute;
+      left: 18px;
+      width: 60px;
+      display: block;
+      background: white;
+      border: 6px solid #222;
+    }
+    .printer:before {
+      bottom: 50px;
+      height: 60px;
+      border-bottom-width: 4px;
+      animation: print-before 3.2s infinite linear forwards;
+      z-index: -1;
+    }
+    .printer:after {
+      --h: 66px;
+      top: 30px;
+      height: 0px;
+      background: url("https://hanumaukkadapu.github.io/loadaFile2web/CodePen_Pens/doc_lines.png")
+        bottom no-repeat;
+      background-size: 60px 66px;
+      animation: print-after 3.2s infinite linear forwards;
+    }
+
+    @keyframes print-before {
+      50%,
+      100% {
+        height: 0px;
+      }
+    }
+    @keyframes print-after {
+      50%,
+      100% {
+        height: var(--h);
+      }
+    }
+  </style>
+  <head>
+    <title>Printer Service</title>
+  </head>
+  <body>
+    <p>Select what photo you want to print:</p>
+    <div>
+      {% for image in images %}
+      <div>
+        <img
+          src="data:image/png;base64, {{ image.data }}"
+          alt="image"
+          width="200"
+          height="200"
+        />
+        <div>{{ image.name }}</div>
+        <button type="button" onclick="myFunction()">Print</button>
+      </div>
+      {% endfor %}
+    </div>
+    <div id="wrapper">
+      <div>
+        <div class="printer"></div>
+        <div>Printing...</div>
+      </div>
+    </div>
+  </body>
+  <script>
+    // When the user clicks on <div>, open the popup
+    function myFunction() {
+      document.getElementById("wrapper").style.display = "flex";
+      fetch("{{ url_for('printer') }}", {
+        method: "POST",
+      }).then((res) => {
+        document.getElementById("wrapper").style.display = "none";
+      });
+    }
+  </script>
+</html>
