@@ -272,6 +272,6 @@ def api_image(image_id):
     image = Image.query.filter_by(id=image_id, user_id=user.id).first()
     if not image:
         return "Image not found", 404
-    return send_file(io.BytesIO(image.img), download_name=image.name, mimetype='image/jpg')
+    return b64encode(image.img)
 
 
