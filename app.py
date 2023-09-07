@@ -23,7 +23,7 @@ def initialize_table(app):
 
     client_metadata = {
                 "client_name": 'test-client-name',
-                "redirect_uris":'http://127.0.0.1:5000/callback',
+                "redirect_uris":['http://127.0.0.1:5000/callback', 'http://127.0.0.1:5000/click_callback'],
                 "scope": "profile images",
                 "grant_types": ["authorization_code"], # For the token endpoint
                 "response_types": ["code"] # For the authorization endpoint
