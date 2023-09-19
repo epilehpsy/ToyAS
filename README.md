@@ -4,7 +4,8 @@ ToyAS is a basic OAuth 2.0 Authorization Server (and Resource Server) that simul
 The main aim of this AS is to debug the OAuth 2.0 flows and 
 to provide a way to enable/disable vulnerability protection mechanisms to learn how some vulns can be exploited.
 This is obviously imposible to do while testing with real AS such as Google or GitHub as they provide
-protection mechanisms.
+protection mechanisms. This server uses [authlib](https://authlib.org/) to enforce a correct OAuth 2.0 logic and to use some of the predefined
+mixins to store specific OAuth elements.
 
 A demo OAuth 2.0 client is included to test the AS funtionality.
 
