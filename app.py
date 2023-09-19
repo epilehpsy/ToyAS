@@ -123,13 +123,13 @@ def logout():
 @app.route('/me')
 @login_required
 def me():
-    return render_template('me.html', user=User.query.filter_by(id = current_user.id), clients=OAuth2Client.query.filter_by(user_id=current_user.id).all())
+    return render_template('me.html', user=User.query.filter_by(id = current_user.id))
 
 @app.route('/client_register', methods=['GET', 'POST'])
 @login_required
 def client_register():
     if request.method == 'GET':
-        return render_template('client_register.html')
+        return render_template('client_register.html', clients=OAuth2Client.query.filter_by(user_id=current_user.id).all())
 
     name = request.form.get('name')
     #Client ID and Client Secret are generated automatically

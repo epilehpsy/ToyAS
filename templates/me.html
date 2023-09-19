@@ -14,24 +14,7 @@
         </div>
     </div>
     <div class="mt-5">
-        <h3>Registered clients</h3>
-        <a href="{{ url_for('client_register') }}" class="btn btn-outline-dark">
-            📝 Create new client
-        </a>
-        <div class="mt-3"></div>
-            {% for client in clients %}
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">{{ client.client_name }} </h5>
-                    <p class="card-text">Client ID: {{ client.client_id }}</p>
-                    <p class="card-text">Client Secret: {{ client.client_secret }}</p>
-                    <p class="card-text">Redirect URI: {{ client.redirect_uris }}</p>
-                    <p class="card-text">Issued at: {{ client.client_id_issued_at }}</p>
-                    <a href="#" class="btn btn-danger">🗑 Delete</a>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
+        TBD
     </div>
 </div>
     
