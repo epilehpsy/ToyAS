@@ -155,7 +155,7 @@ def client_register():
     db.session.add(client)
     db.session.commit()
     flash('Client added successfully')
-    return redirect(url_for('me'))
+    return redirect(url_for('client_register'))
 
 
 @app.route('/images', methods=['GET', 'POST'])
@@ -165,7 +165,6 @@ def images():
         user_images=Image.query.filter_by(user_id=current_user.id).all()
         return render_template('images.html', images=user_images)
 
-    #TODO: Add image 
     image = request.files.get('image')
     if not image:
         return "No image", 400
